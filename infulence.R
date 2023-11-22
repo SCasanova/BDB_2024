@@ -90,11 +90,12 @@ influence_fun <- function(x,y, mu_x, mu_y, rad_dir, scal_x,scal_y){
 
 
 
-df <- data_ball %>% 
-    select(gameId, playId, frameId,nflId, radio, s, rad_dir, vector_x, vector_y, px = x,py = y,mu_x,mu_y,scal_x,scal_y) %>% 
-    filter(!is.na(rad_dir)) %>% 
-    head(1) %>% 
-    data.frame()
+df <- data_ball %>%
+  filter(club != 'football') %>% 
+  select(gameId, playId, frameId,nflId, radio, s, rad_dir, vector_x, vector_y, px = x,py = y,mu_x,mu_y,scal_x,scal_y) %>% 
+  filter(!is.na(rad_dir)) %>% 
+  head(1) %>% 
+  data.frame()
   
   
 personalfix::time_check({

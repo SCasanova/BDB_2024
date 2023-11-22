@@ -4,7 +4,6 @@ library(gganimate)
 library(mvnfast)
 
 
-
 radius <- function(distance){
   purrr::map_dbl(
     distance,
@@ -28,6 +27,12 @@ ggplot(test, aes(x,y))+
   scale_y_continuous(limits = c(0,12), breaks = seq(0,12,2))
 
 week1 <- read_csv('data/tracking_week_1.csv')
+plays <- read_csv('data/plays.csv')
+
+plays_pbp <- load_pbp(2022) %>% 
+  select(old_game_id, play_id, pass, rush, sack, qb_scramble, play_type) %>% 
+  filter((pass == 1 | (rush == 1 & qb_scramble == 0)) & sack == 0) %>% 
+  mutate(game_id = as.numeric(old_game_id))
 
 ball_loc <- week1 %>% 
   filter(club == 'football') %>% 
@@ -46,13 +51,37 @@ data_ball <- week1 %>%
   group_by(gameId, playId, frameId) %>% 
   mutate(distance_to_ball = sqrt((x-x_ball)^2 + (y-y_ball)^2)) %>% 
   ungroup() %>% 
+  inner_join(plays_pbp, by = c('gameId' = 'game_id', 'playId' = 'play_id')) %>% 
   mutate(radio = radius(distance_to_ball),
-         speed_ratio = s^2/13^2,
+         speed_ratio = s^2/(13.6)^2,
          scal_x = (radio+(radio*speed_ratio))/2,
          scal_y = (radio-(radio*speed_ratio))/2,
          mu_x = -s*sin((dir*pi/180))*0.5+x,
-         mu_y = -s*cos((dir*pi/180))*0.5+y)
+         mu_y = -s*cos((dir*pi/180))*0.5+y,
+         initial = ifelse(
+           event == 'pass_arrived' | event == 'handoff' | event == 'run' | event == 'lateral', TRUE, FALSE
+         )) %>% 
+  # head(100) %>% 
+  group_by(gameId, playId, nflId) %>% 
+  filter(row_number() >= min(which(initial == TRUE)),
+         row_number() <= min(which(event == 'tackle'))+1)
+  
 
+data_ball %>% 
+  filter(!is.na(event) & !event %in% c('ball_snap', 
+                                       'line_set', 
+                                       'shift',
+                                       'snap_direct', 
+                                       'man_in_motion', 
+                                       'pass_forward',
+                                       'play_action',
+                                       'lateral',
+                                       'run_pass_option')) %>% 
+  group_by(gameId, playId) %>% 
+  summarise(first= first((event))) %>% 
+  ungroup() %>% 
+  pull(first) %>% 
+  unique()
 
 
 # influence_fun <- function(x,y,px,py,mu_x,mu_y,rad_dir,scal_x,scal_y){
