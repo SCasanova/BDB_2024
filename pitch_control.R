@@ -51,7 +51,7 @@ una_jugada <- map_var2 %>% t() %>%
   left_join(teams, by = c('player' = 'nflId'))
 
 pc_2 <- una_jugada %>% 
-  filter(frame <= 20) %>% 
+  filter(frame <= 5) %>% 
   group_by(x,y,frameId=frame,club) %>% 
   summarise(suma = sum(influ)) %>% 
   ungroup() %>% 
@@ -67,11 +67,12 @@ pc_2 <- una_jugada %>%
   )
 
 players <- data_ball %>%  
-  filter(gameId == '2022090800', playId == 56 & frameId <= 20)
+  filter(gameId == '2022090800', playId == 56 & frameId <= 5)
 
 plot <- ggplot(pc_2, aes(x, y)) +
-  geom_raster(aes(fill = PC), interpolate = F, alpha = 0.8)+
-  scale_fill_viridis_c()+
+  geom_raster(aes(fill = PC), interpolate = F, alpha = 0.6)+
+  scale_fill_gradientn(limits  = range(0, 1),
+                       colours = c('red', 'white', 'blue'))+
   scale_x_continuous(limits = c(0,100))+
   scale_y_continuous(limits = c(0,54))+
   coord_fixed()+
@@ -80,4 +81,4 @@ plot <- ggplot(pc_2, aes(x, y)) +
                arrow = arrow(length = unit(2, "mm")))+
   transition_manual(frameId)
 
-animate(plot,fps=25)
+animate(plot,fps=20)
