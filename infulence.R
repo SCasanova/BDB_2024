@@ -9,8 +9,8 @@ frame_influence <- function(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y, game, play, f
   # Calculamos un box de 20x20 para calcular la influencia 
   # (se puede optimizar con el angulo y velocidad)
   coords <- expand.grid(
-    x= seq(max(round(mu_x)-10, 0), min(round(mu_x)+10, 100)),
-    y =seq(max(round(mu_y)-10, 0), min(round(mu_y)+10, 54))
+    x= seq(max(round(mu_x)-scal_x*2, 0), min(round(mu_x)+scal_x*2, 100)),
+    y =seq(max(round(mu_y)-scal_y*2.8, 0), min(round(mu_y)+scal_y*2.8, 54))
   )
   
   # La constante normalizadora (valor maximo de influencia)
@@ -31,7 +31,6 @@ frame_influence <- function(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y, game, play, f
       influ =( mapply(influence_fun, df$x, df$y, df$mu_x,df$mu_y, df$rad_dir, df$scal_x,df$scal_y, SIMPLIFY=FALSE) %>% 
         unlist())/normalizer
     )
-  
   
 }
 
@@ -58,7 +57,7 @@ pre_proccess <- function(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y){
   sigma = R%*%S%*%S%*%R_inv
   # Normal bi-variada con estos datos (calculada para x = mu_x, y = mu_y)
   dmvn(c(mu_x,mu_y), mu, sigma)
-}
+} 
 
 influence_fun <- function(x,y, mu_x, mu_y, rad_dir, scal_x,scal_y){
   # Seno y coseno de direccion en radianes
@@ -93,8 +92,9 @@ influence_fun <- function(x,y, mu_x, mu_y, rad_dir, scal_x,scal_y){
 df <- data_ball %>%
   filter(club != 'football') %>% 
   select(gameId, playId, frameId,nflId, radio, s, rad_dir, vector_x, vector_y, px = x,py = y,mu_x,mu_y,scal_x,scal_y) %>% 
-  filter(!is.na(rad_dir)) %>% 
-  head(1) %>% 
+  filter(!is.na(rad_dir)) %>%
+  # head(1) %>% 
+  filter(gameId == 2022090800 & playId == 1230) %>%
   data.frame()
   
   
@@ -108,25 +108,15 @@ personalfix::time_check({
 test <- map_var2 %>% t() %>% 
   data.frame() %>% 
   unnest(cols = c(game, play, frame, player, x, y, influ)) %>% 
-  filter(game == '2022090800', play == 56, player ==52536, frame == 2)
+  filter(player==34452, frame == 3)
 
-
-map_var2 %>% t() %>% 
-  data.frame() %>% 
-  unnest(cols = c(game, play, frame, player, x, y, influ)) %>% 
-  group_by(game, play, frame, player) %>% 
-  summarise(inf = min(influ)) %>% 
-  pull(inf) %>% max()
 
 ggplot(test, aes(x,y,z=influ))+
   geom_contour_filled(breaks = seq(0.2,1,0.2))+
   ggplot2::xlim(c(0,100))+
   ggplot2::ylim(c(0,54))+
+  geom_hline(yintercept = 54)+
   coord_fixed()
-  scale_y_continuous(limits = c(0,40))+
-  scale_x_continuous(limits = c(0,100))+
-  coord_fixed()+
-  scale_fill_manual(values = RColorBrewer::brewer.pal(6, 'Blues'))
 
 
 

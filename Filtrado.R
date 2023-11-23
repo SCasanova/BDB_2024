@@ -37,31 +37,16 @@ data_ball <- week1 %>%
          scal_y = (radio-(radio*speed_ratio))/2,
          mu_x = -s*sin((dir*pi/180))*0.5+x,
          mu_y = -s*cos((dir*pi/180))*0.5+y,
-         # Crear etiqueta de inicio de filtrio
+         # Crear etiqueta de inicio de filtro
          initial = ifelse(
-           event == 'pass_arrived' | event == 'handoff' | event == 'run' | event == 'lateral', TRUE, FALSE
+           event == 'pass_arrived' | event == 'handoff' | event == 'run' | event == 'lateral' | event == 'pass_outcome_caught', TRUE, FALSE
          )) %>% 
   # head(100) %>% 
   group_by(gameId, playId, nflId) %>% 
   # Por cada jugada y jugador, mantener los frames mayores al initial y 
   # menores a la tacleada -1
-  filter(row_number() >= min(which(initial == TRUE)),
-         row_number() <= min(which(event == 'tackle'))+1)
+  filter(any(initial)) %>% 
+  filter(row_number() >= min(which(initial))) %>% 
+  ungroup()
 
-
-data_ball %>% 
-  filter(!is.na(event) & !event %in% c('ball_snap', 
-                                       'line_set', 
-                                       'shift',
-                                       'snap_direct', 
-                                       'man_in_motion', 
-                                       'pass_forward',
-                                       'play_action',
-                                       'lateral',
-                                       'run_pass_option')) %>% 
-  group_by(gameId, playId) %>% 
-  summarise(first= first((event))) %>% 
-  ungroup() %>% 
-  pull(first) %>% 
-  unique()
 
