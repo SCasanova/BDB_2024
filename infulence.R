@@ -94,7 +94,7 @@ df <- data_ball %>%
   select(gameId, playId, frameId,nflId, radio, s, rad_dir, vector_x, vector_y, px = x,py = y,mu_x,mu_y,scal_x,scal_y) %>% 
   filter(!is.na(rad_dir)) %>%
   # head(1) %>% 
-  filter(gameId == 2022090800 & playId == 1230) %>%
+  filter(gameId == 2022090800 & playId == 146) %>%
   data.frame()
   
   

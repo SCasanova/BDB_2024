@@ -47,11 +47,11 @@ library(gganimate)
 una_jugada <- map_var2 %>% t() %>% 
   data.frame() %>% 
   unnest(cols = c(game, play, frame, player, x, y, influ)) %>% 
-  filter(game == '2022090800', play == 56) %>% 
+  # filter(game == '2022090800', play == 56) %>% 
   left_join(teams, by = c('player' = 'nflId'))
 
 pc_2 <- una_jugada %>% 
-  filter(frame <= 5) %>% 
+  filter(frame <= 30) %>%
   group_by(x,y,frameId=frame,club) %>% 
   summarise(suma = sum(influ)) %>% 
   ungroup() %>% 
@@ -67,7 +67,7 @@ pc_2 <- una_jugada %>%
   )
 
 players <- data_ball %>%  
-  filter(gameId == '2022090800', playId == 56 & frameId <= 5)
+  filter(gameId == '2022090800', playId == 146, frameId <= 30)
 
 plot <- ggplot(pc_2, aes(x, y)) +
   geom_raster(aes(fill = PC), interpolate = F, alpha = 0.6)+
