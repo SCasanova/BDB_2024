@@ -2,6 +2,11 @@
 library(tidyverse)
 library(nflverse)
 
+# We read de data of plays and tackles
+plays <- read_csv('data/plays.csv')
+tackles <- read_csv('data/tackles.csv')
+week <- read_csv('data/tracking_week_1.csv')
+
 # We load the data of nflverse
 plays_pbp <- load_pbp(2022) %>% 
   select(old_game_id, play_id, pass, rush, sack, qb_scramble, play_type) %>% 
@@ -28,7 +33,8 @@ tackles_preprocess <- function(week){
     inner_join(plays_pbp, by = c('gameId' = 'game_id', 'playId' = 'play_id'))%>%
     # Crear etiqueta de inicio de filtro
     mutate(initial = ifelse(
-      event == 'run' | event == 'lateral' | event == 'pass_outcome_caught', TRUE, FALSE
+      event == 'handoff'| event == 'run' | event == 'lateral' | event == 'pass_arrived' |
+      event == 'pass_outcome_caught', TRUE, FALSE
     )) %>% 
     group_by(gameId, playId, nflId) %>% 
     # Por cada jugada y jugador, mantener los frames mayores al initial y 
@@ -58,12 +64,7 @@ tackles_preprocess <- function(week){
   data_tackles
 }
 
-# We read de data of plays and tackles
-plays <- read_csv('data/plays.csv')
-tackles <- read_csv('data/tackles.csv')
-week <- read_csv('data/tracking_week_1.csv')
-
-# 
+# Execution of the pipeline
 data_tackles <- tackles_preprocess(week)
-
+# Play example
 play_ex <- filter(data_tackles, gameId == 2022090800, playId == 1102)
