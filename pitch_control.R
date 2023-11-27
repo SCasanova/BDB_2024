@@ -9,7 +9,7 @@ teams <- week1 %>%
 un_cuadro <- map_var2 %>% t() %>% 
   data.frame() %>% 
   unnest(cols = c(game, play, frame, player, x, y, influ)) %>% 
-  filter(game == '2022090800', play == 56, frame == 1) %>% 
+  filter(game == '2022090800', play == 146, frame == 40) %>% 
   left_join(teams, by = c('player' = 'nflId'))
   
 
@@ -28,7 +28,8 @@ pc_1 <- un_cuadro %>%
   )
 
 players <- data_ball %>%  
-  filter(gameId == '2022090800', playId == 56, frameId == 1)
+  filter(gameId == '2022090800', playId == 146, frameId == 40, 
+         nflId %in% c(43335, 38577))
 
 ggplot(pc_1, aes(x, y)) +
   geom_raster(aes(fill = PC), interpolate = F, alpha = 0.8)+
@@ -38,11 +39,15 @@ ggplot(pc_1, aes(x, y)) +
   coord_fixed()+
   geom_point(data = players, aes(x,y, color = club), size = 5)+
   geom_segment(data = players, aes(x = x, y = y, xend = vector_x, yend = vector_y),
-               arrow = arrow(length = unit(2, "mm")))
+               arrow = arrow(length = unit(2, "mm")))+
+  scale_fill_gradientn(limits  = range(0, 1),
+                       colours = c('red', 'white', 'blue'))
 
 
 # Animada -----------------------------------------------------------------
-
+library(tidyverse) 
+library(mvnfast) # Multi-variada fast
+library(parallel)
 library(gganimate)
 una_jugada <- map_var2 %>% t() %>% 
   data.frame() %>% 
@@ -59,15 +64,16 @@ pc_2 <- una_jugada %>%
   mutate(across(.cols = everything(), function(x)ifelse(is.na(x), 0, x)),
          PC = logistic(LA-BUF)) %>% 
   select(x,y,frameId, PC) %>% 
-  group_by(frameId) %>% 
+  group_by(frameId) %>%
   complete(
     x = 0:100,
     y = 0:54,
     fill = list(PC= 0.5)
-  )
+  ) %>% 
+  ungroup()
 
 players <- data_ball %>%  
-  filter(gameId == '2022090800', playId == 146, frameId <= 30)
+  filter(gameId == '2022090800', playId == 146, frameId ==22)
 
 plot <- ggplot(pc_2, aes(x, y)) +
   geom_raster(aes(fill = PC), interpolate = F, alpha = 0.6)+
