@@ -9,8 +9,8 @@ frame_influence <- function(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y, game, play, f
   # Calculamos un box de 20x20 para calcular la influencia 
   # (se puede optimizar con el angulo y velocidad)
   coords <- expand.grid(
-    x= seq(max(round(mu_x)-scal_x*2, 0), min(round(mu_x)+scal_x*2, 100)),
-    y =seq(max(round(mu_y)-scal_y*2.8, 0), min(round(mu_y)+scal_y*2.8, 54))
+    x= seq(max(round(mu_x)-round(scal_x*2), 0), min(round(mu_x)+round(scal_x*2), 100)),
+    y =seq(max(round(mu_y)-round(scal_y*2.8), 0), min(round(mu_y)+round(scal_y*2.8), 54))
   )
   
   # La constante normalizadora (valor maximo de influencia)
