@@ -5,6 +5,19 @@ library(nflverse)
 week1 <- read_csv('data/tracking_week_1.csv')
 plays <- read_csv('data/plays.csv')
 
+radius <- function(distance){
+  purrr::map_dbl(
+    distance,
+    function(x){
+      if(x <= 17){
+        exp(x*0.1144653)+3
+      } else{
+        10
+      }
+    }
+  )
+}
+
 plays_pbp <- load_pbp(2022) %>% 
   select(old_game_id, play_id, pass, rush, sack, qb_scramble, play_type) %>% 
   filter((pass == 1 | (rush == 1 & qb_scramble == 0)) & sack == 0) %>% 
@@ -25,9 +38,9 @@ data_ball <- week1 %>%
          vector_x = -s*sin(rad_dir)+x,
          vector_y = -s*cos(rad_dir)+y) %>% 
   left_join(ball_loc, by = c('gameId', 'playId', 'frameId')) %>% 
-  group_by(gameId, playId, frameId) %>% 
+  # group_by(gameId, playId, frameId) %>% 
   mutate(distance_to_ball = sqrt((x-x_ball)^2 + (y-y_ball)^2)) %>% 
-  ungroup() %>% 
+  # ungroup() %>% 
   # Agregar datos por jugada (no tener sacks ni scrambles)
   inner_join(plays_pbp, by = c('gameId' = 'game_id', 'playId' = 'play_id')) %>% 
   # Manipulacion de variables para PC
