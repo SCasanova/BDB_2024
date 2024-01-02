@@ -20,6 +20,11 @@ players <- players %>%
   # Select columns of interest
   select(nflId, height, weight, position, displayName)
 
+# We read de data of plays and tackles
+plays <- read_csv('data/plays.csv')
+tackles <- read_csv('data/tackles.csv')
+week <- read_csv('data/tracking_week_1.csv')
+
 # We load the data of nflverse
 plays_pbp <- load_pbp(2022) %>% 
   select(old_game_id, play_id, pass, rush, sack, qb_scramble, play_type) %>% 
