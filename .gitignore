@@ -3,3 +3,9 @@
 .RData
 .Ruserdata
 /data
+/parquet_pc
+/clean_data
+/value_map
+/partitions
+/pitch_control
+/def_pc

@@ -1,25 +1,26 @@
 library(tidyverse) 
 library(mvnfast) # Multi-variada fast
 library(parallel) # Para paralelizar
+library(microbenchmark)
 
 
-# Esta es la primera funcion que llamamos:
-# Toma las coordenada, la media, los eigenvalores (scal) y los datos de la jugada
+# First function call (once per frame call)
+# Takes the player coordinates, the mean,  eigenvalues(scaling factors), 
+# direction and play metadata
 frame_influence <- function(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y, game, play, frame,player){
-  # Calculamos un box de 20x20 para calcular la influencia 
-  # (se puede optimizar con el angulo y velocidad)
+  # We calculate a box based on the direction of movement
   coords <- expand.grid(
-    x= seq(max(round(mu_x)-round(scal_x*2), 0), min(round(mu_x)+round(scal_x*2), 100)),
-    y =seq(max(round(mu_y)-round(scal_y*2.8), 0), min(round(mu_y)+round(scal_y*2.8), 54))
+    x= seq(max(round(mu_x)-round(scal_x*2), 0), min(round(mu_x)+round(scal_x*2), 120)),
+    y =seq(max(round(mu_y)-ceiling(scal_y*2.8), 0), min(round(mu_y)+ceiling(scal_y*2.8), 54))
   )
   
-  # La constante normalizadora (valor maximo de influencia)
-  # La calculamos una sola vez por eficiencia
+  # We calculate the normalizing constant (max influence value) once for effiency
   normalizer <- pre_proccess(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y)
-  # Lo agregamos como columna
+  # Now we create a df with our coordinate grid and previous parameters
+  # Possible to compute sine and cosine before (maybe matrices)
   df <- cross_join(coords, tibble(px=px,py=py,mu_x=mu_x,mu_y=mu_y,rad_dir=rad_dir,scal_x=scal_x,scal_y=scal_y))
 
-  # Regresamos una lista con toda la info y el calculo de influencia
+  # List output with play metadata and the vectorized output for all coordinates influene
   list(
       game = game,
       play = play,
@@ -34,51 +35,52 @@ frame_influence <- function(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y, game, play, f
   
 }
 
-# Función que se corre una sola vez por grid para la constante normalizadora
+# Functino that creates the normalizing constant (run once per player per frame)
 pre_proccess <- function(px,py,mu_x,mu_y,rad_dir,scal_x,scal_y){
-  # Seno y coseno de direccion en radianes
+  # Compute sine and cosine
   sin_dir <- sin(rad_dir)
   cos_dir <- cos(rad_dir)
-  # Vector de medias
+  # Mean vector
   mu <-  c(mu_x,mu_y)
-  # Matriz de rotacion
+  # Rotation matrix
   R <- matrix(
     c(cos_dir, -sin_dir, sin_dir, cos_dir),
     ncol = 2
   )
-  # Inversa calculada a mano
+  # Hand-calulated 2x2 inverse for efficiency
   R_inv <- matrix(
     c(cos_dir, sin_dir, -sin_dir, cos_dir),
     ncol = 2
   )
-  # Matriz de eigenvalores 
+  # Eigenvalue (scaling) matrix
   S = matrix(c(scal_y,0,0,scal_x), ncol = 2)
-  # Calculo de matriz de covarianzas
+  # Covariance matrix computing
   sigma = R%*%S%*%S%*%R_inv
-  # Normal bi-variada con estos datos (calculada para x = mu_x, y = mu_y)
-  dmvn(c(mu_x,mu_y), mu, sigma)
+  # We calculate the bi-variate normal value for the location of mu
+  dmvn(mu, mu, sigma)
 } 
 
 influence_fun <- function(x,y, mu_x, mu_y, rad_dir, scal_x,scal_y){
-  # Seno y coseno de direccion en radianes
+  # Compute sine and cosine
   sin_dir <- sin(rad_dir)
   cos_dir <- cos(rad_dir)
+  # Mean vector
   mu <-  c(mu_x,mu_y)
-  # Matriz de rotacion
+  # Rotation matrix
   R <- matrix(
     c(cos_dir, -sin_dir, sin_dir, cos_dir),
     ncol = 2
   )
-  # Inversa calculada a mano
+  # Hand-calulated 2x2 inverse for efficiency
   R_inv <- matrix(
     c(cos_dir, sin_dir, -sin_dir, cos_dir),
     ncol = 2
   )
-  # Matriz de eigenvalores (escalamiento)
+  # Eigenvalue (scaling) matrix
   S = matrix(c(scal_y,0,0,scal_x), ncol = 2)
-  # Calculo de matriz de covarianzas
+  # Covariance matrix computing
   sigma = R%*%S%*%S%*%R_inv
-  # Normal bi-variada con estos datos
+  # Get bi-variate normal for the coordinates
   dmvn(c(x,y), mu, sigma)
 }
 
@@ -89,35 +91,31 @@ influence_fun <- function(x,y, mu_x, mu_y, rad_dir, scal_x,scal_y){
 
 
 
-df <- data_ball %>%
-  filter(club != 'football') %>% 
+# df <- data_ball %>%
+#   filter(club != 'football') %>% 
+#   select(gameId, playId, frameId,nflId, radio, s, rad_dir, vector_x, vector_y, px = x,py = y,mu_x,mu_y,scal_x,scal_y) %>% 
+#   filter(!is.na(rad_dir)) %>%
+#   # filter(gameId == 2022090800 & playId == 146) %>%
+#   data.frame()
+  
+
+library(arrow)
+
+df <- read_parquet('clean_data/week9.parquet') %>% 
+  filter(club != 'football') %>%
   select(gameId, playId, frameId,nflId, radio, s, rad_dir, vector_x, vector_y, px = x,py = y,mu_x,mu_y,scal_x,scal_y) %>% 
-  filter(!is.na(rad_dir)) %>%
-  # head(1) %>% 
-  filter(gameId == 2022090800 & playId == 146) %>%
-  data.frame()
-  
-  
-personalfix::time_check({
-  # Se vectoriza y paraleliza sobre todos nuestros frames
-  map_var2 <-mcmapply(frame_influence,df$px,df$py,df$mu_x,df$mu_y,df$rad_dir,df$scal_x,df$scal_y,df$gameId, df$playId, df$frameId, df$nflId, mc.cores=parallel::detectCores()-1)
-
-})
+  filter(!is.na(rad_dir))
 
 
-test <- map_var2 %>% t() %>% 
+# Parallelized and vectorized run
+map_var2 <-mcmapply(frame_influence,df$px,df$py,df$mu_x,df$mu_y,df$rad_dir,df$scal_x,df$scal_y,df$gameId, df$playId, df$frameId, df$nflId, mc.cores=parallel::detectCores()-1)
+
+final <- map_var2 %>% t() %>% 
   data.frame() %>% 
-  unnest(cols = c(game, play, frame, player, x, y, influ)) %>% 
-  filter(player==34452, frame == 3)
+  unnest(cols = c(game, play, frame, player, x, y, influ))
 
 
-ggplot(test, aes(x,y,z=influ))+
-  geom_contour_filled(breaks = seq(0.2,1,0.2))+
-  ggplot2::xlim(c(0,100))+
-  ggplot2::ylim(c(0,54))+
-  geom_hline(yintercept = 54)+
-  coord_fixed()
-
+write_parquet(final, 'parquet_pc/week9_pc.parquet')
 
 
 
