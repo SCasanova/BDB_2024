@@ -108,8 +108,7 @@ plot <- ggplot(pc_2 %>% filter(frame == 6), aes(x, y)) +
   scale_color_manual(values = c('green', 'firebrick', 'navy'))+
   geom_point(data = players, aes(x,y, color = club), size = 3)+
   geom_segment(data = players, aes(x = x, y = y, xend = vector_x, yend = vector_y),
-               arrow = arrow(length = unit(2, "mm")))+
-  transition_manual(frame)
+               arrow = arrow(length = unit(2, "mm")))
 
 animate(plot,fps=20)
 

@@ -4,6 +4,22 @@ library(parallel) # Para paralelizar
 library(microbenchmark)
 
 
+value <- frame_influence(25,25,25,25,0,4,4,1,1,1,'a') %>%  t() %>% 
+  data.frame() %>% 
+  unnest(cols = c(game, play, frame, player, x, y, influ)) %>% 
+  select(x,y,value =influ)
+
+pc <- frame_influence(25,25,25,25,0,4,4,1,1,1,'b') %>%  t() %>% 
+  data.frame() %>% 
+  unnest(cols = c(game, play, frame, player, x, y, influ)) %>% 
+  mutate(influ = plogis(influ)) %>% 
+  select(x,y,pc =influ)
+
+
+inner_join(pc, value, by = c('x','y')) %>% 
+  mutate(quality = pc*value) %>% 
+  summarise(sum(quality))
+
 # First function call (once per frame call)
 # Takes the player coordinates, the mean,  eigenvalues(scaling factors), 
 # direction and play metadata
