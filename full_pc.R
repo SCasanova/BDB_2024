@@ -3,10 +3,15 @@ library(arrow)
 library(nflverse)
 
 
-# Home team and away team to standardize team names
-
-games <- read_csv('data/games.csv') %>% 
-  select(week, homeTeamAbbr, visitorTeamAbbr)
+# Get offensive and defensive teams for each play
+plays <- read_csv('data/plays.csv') %>% 
+  select(game=gameId, play=playId, club = possessionTeam) %>% 
+  mutate(team = 'off') %>% 
+  bind_rows(
+    read_csv('data/plays.csv') %>% 
+      select(game = gameId, play = playId, club = defensiveTeam) %>% 
+      mutate(team = 'def')
+  )
 
 
 # Get defenseive team
@@ -19,61 +24,63 @@ defenders <- read_csv('data/tackles.csv') %>%
   select(game = gameId, play = playId, nflId)
 
 week_pitch_control <- function(week_to_get, defensive = F){
-  flag <- ifelse(defensive, 'def-', '')
+  # flag <- ifelse(defensive, 'def-', '')
+  # Tracking data for the week
   week_data <- read_csv(glue::glue('data/tracking_week_{num}.csv', 
                                    num = str_sub(week_to_get, start=5)))
   
+  # Ball carrier ID to eliminate them from PC model
   bc <- read_csv('data/plays.csv') %>% 
     select(gameId, playId, player = ballCarrierId)
   
+  # Players and their club (for this week)
   players <-week_data %>% 
     select(nflId, club) %>% 
     distinct()
   
-  games_week <- games %>% 
-    filter(`week` == str_sub(week_to_get, start=5) %>% as.numeric())
-  
-  teams <- inner_join(players, games_week, by =c('club'= 'homeTeamAbbr' )) %>% 
-    mutate(team = club, club = 'home') %>% 
-    bind_rows(
-      inner_join(players, games_week, by =c('club'= 'visitorTeamAbbr' )) %>% 
-        mutate(team =club,club = 'away')
-    ) %>% 
-    select(nflId, club, team)
-  
+  # get all the file partitions for this week
   filenames <- list.files(glue::glue("./partitions/{week_to_get}/"), 
                           full.names = TRUE)
   
   for(f in filenames){
+    # Read file
     df <- read_parquet(f) %>% 
-      anti_join(bc, by = c('game' = 'gameId', 'play' = 'playId', 'player' = 'player')) %>% 
-      left_join(teams, by = c('player' = 'nflId')) 
-    
-  if(defensive){
-    df <- df %>% 
-      inner_join(defenders, by = c('game', 'play', 'player' = 'nflId'))
-  }
+      # Eliminte the BC from each play
+      anti_join(bc, by = c('game' = 'gameId', 'play' = 'playId', 'player' = 'player')) %>%
+      # Add the club variable for each player
+      left_join(players, by = c('player' = 'nflId')) %>% 
+      # Indicate which team is offense and defense for each play
+      left_join(plays, by = c('game', 'play', 'club'))
+
+  # if(defensive){
+  #   df <- df %>% 
+  #     inner_join(defenders, by = c('game', 'play', 'player' = 'nflId'))
+  # }
     
     
     if(defensive){
-      pc <- df %>%
-        group_by(game,play,frame,x,y,club) %>% 
-        summarise(suma = sum(influ)) %>% 
-        ungroup() %>% 
-        pivot_wider(names_from = club, values_from = suma) %>% 
-        mutate(across(.cols = everything(), function(x)ifelse(is.na(x), 0, x)),
-                      PC = ifelse(home+away > 1 , 1 , home+away)) %>% 
-        select(game,play, frame, x,y, PC)
+      # pc <- df %>%
+      #   group_by(game,play,frame,x,y,club) %>% 
+      #   summarise(suma = sum(influ)) %>% 
+      #   ungroup() %>% 
+      #   pivot_wider(names_from = team, values_from = suma) %>% 
+      #   mutate(across(.cols = everything(), function(x)ifelse(is.na(x), 0, x)),
+      #                 PC = ifelse(home+away > 1 , 1 , home+away)) %>% 
+      #   select(game,play, frame, x,y, PC)
     } else{
       pc <- df %>%
-        group_by(game,play,frame,x,y,club) %>% 
+        group_by(game,play,frame,x,y,team) %>% 
+        # get the influence sum for each coordinate for each team
         summarise(suma = sum(influ)) %>% 
         ungroup() %>% 
-        pivot_wider(names_from = club, values_from = suma) %>% 
+        # Wide format so only onw row per frame per coordinate
+        pivot_wider(names_from = team, values_from = suma) %>% 
+        # Compute PC by subtractin off from def (pure def = 1 thanks to plogis)
         mutate(across(.cols = everything(), function(x)ifelse(is.na(x), 0, x)),
-               PC = plogis(home-away)) %>% 
+               PC = plogis(def-off)) %>% 
         select(game,play, frame, x,y, PC) %>% 
         group_by(game,play, frame) %>% 
+        # Fill remaining coordintes with 0.5 for each frame
         complete(
           x = 0:100,
           y = 0:54,

@@ -11,8 +11,6 @@ value_normalizer <- function(x){
   exp(-abs(x-100)/200)
 }
 
-expand_grid(1:120,
-            )
 
 # Get the influence of th ball carrier for each play
 value_get <- function(week_to_get){
