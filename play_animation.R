@@ -8,6 +8,7 @@ options(repr.plot.width=20, repr.plot.height = 10)
 
 
 # Data sets
+# week <- read_parquet('clean_data/week1.parquet')
 week <- read_csv('data/tracking_week_1.csv')
 tackles <- read_csv('data/tackles.csv')
 plays <- read_csv('data/plays.csv')
@@ -17,8 +18,8 @@ games <- read_csv('data/games.csv')
 week <- left_join(week, tackles, c('gameId', 'playId', 'nflId'))
 
 # We choose the play we want to plot
-game_id <- 2022090800
-play_id <- 146
+game_id <- 2022091101
+play_id <- 641
 
 # Filter the game of interest
 game_ <- filter(games, gameId == game_id)
@@ -190,7 +191,7 @@ play_frames <- plot_field() +
   geom_point(
     data = df_track %>% dplyr::filter(team == game_$homeTeamAbbr),
     mapping = aes(x = x, y = y),
-    fill = df_colors$home_1, colour = df_colors$home_2,
+    fill = '#40b3ed', colour = '#000000',
     shape = 21, alpha = 1, size = 8, stroke = 1.5
   ) +
   geom_text(
@@ -199,12 +200,12 @@ play_frames <- plot_field() +
     colour = df_colors$home_2, size = 4.5, 
   ) +
   # ball
-  geom_point(
-    data = df_track %>% dplyr::filter(team == "football"),
-    mapping = aes(x = x, y = y),
-    fill = "#935e38", colour = "#d9d9d9",
-    shape = 21, alpha = 1, size = 4, stroke = 1
-  ) +
+  # geom_point(
+  #   data = df_track %>% dplyr::filter(team == "football"),
+  #   mapping = aes(x = x, y = y),
+  #   fill = "#935e38", colour = "#d9d9d9",
+  #   shape = 21, alpha = 1, size = 4, stroke = 1
+  # ) +
   # title 
   labs(title = play_$playDescription) +
   # animation stuff
@@ -219,9 +220,10 @@ play_anim <- animate(
   play_frames,
   fps = 10, 
   nframe = play_length,
-  width = 800,
-  height = 400,
+  width = 1600,
+  height = 800,
   end_pause = 0
 )
 
 play_anim
+anim_save('figures/play_example.gif', animation = last_animation())
