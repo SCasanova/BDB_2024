@@ -7,10 +7,6 @@ plays <- read_csv('data/plays.csv') %>%
   select(game = gameId, play = playId, ballCarrierId)
 
 
-value_normalizer <- function(x){
-  exp(-abs(x-100)/200)
-}
-
 
 # Get the influence of th ball carrier for each play
 value_get <- function(week_to_get){

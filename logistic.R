@@ -28,33 +28,33 @@ tackles <- read_csv('data/tackles.csv') %>%
 
 
 fitting <- 
-  inner_join(quality %>% filter(min_dist == 1), 
+  inner_join(quality %>% filter(min_dist == 1 & distance <= 2), 
              tackles, 
              by = c('game', 'play', 'tackler' = 'nflId')) %>% 
   anti_join(scrambles, by = c('game' = 'game_id', 'play' = 'play_id')) %>% 
   distinct()
   # filter(tackling == 0 | (tackling == 1 & sum_quality >= 5.9))
 
-fitting2 <- 
-  inner_join(quality %>% filter(frame_before == 1 | min_dist ==1), 
-             tackles, 
-             by = c('game', 'play', 'tackler' = 'nflId')) %>% 
-  anti_join(scrambles, by = c('game' = 'game_id', 'play' = 'play_id')) %>% 
-  distinct() %>% 
-  group_by(game, play, tackler) %>% 
-  summarise(sum_quality =sum(sum_quality),
-            tackling = last(tackling))
+# fitting2 <- 
+#   inner_join(quality %>% filter(frame_before == 1 | min_dist ==1), 
+#              tackles, 
+#              by = c('game', 'play', 'tackler' = 'nflId')) %>% 
+#   anti_join(scrambles, by = c('game' = 'game_id', 'play' = 'play_id')) %>% 
+#   distinct() %>% 
+#   group_by(game, play, tackler) %>% 
+#   summarise(sum_quality =sum(sum_quality),
+#             tackling = last(tackling))
 
 ggplot(fitting %>% filter(tackling == 1), aes(sample = sum_quality))+
   geom_qq(distribution = stats::qunif)
 
-ggplot(fitting2 %>% filter(tackling == 1), aes(y =sum_quality))+
-  geom_boxplot()
+# ggplot(fitting2 %>% filter(tackling == 1), aes(y =sum_quality))+
+#   geom_boxplot()
 
 ggplot(fitting %>% filter(tackling == 0), aes(sample = sum_quality))+
   geom_qq(distribution = stats::qunif)
 
-ggplot(fitting2 %>% filter(tackling == 0) , aes(sum_quality))+
+ggplot(fitting %>% filter(tackling == 1) , aes(sum_quality))+
   geom_histogram()
 
 model <- glm(tackling ~ sum_quality, 
@@ -64,8 +64,8 @@ model <- glm(tackling ~ sum_quality,
 saveRDS(model, 'clean_data/model.RDS')
 
 prob <- function(suma){
-  exp(-1.2542  + 0.2775  *suma)/ 
-    (1 + exp(-1.2542  + 0.2775  *suma))
+  exp(-1.1180  + 0.2277  *suma)/ 
+    (1 + exp(-1.1180  + 0.2277  *suma))
 } 
 
 
@@ -83,7 +83,7 @@ line <- tibble(
 
 library(patchwork)
 
-logistic_line <- ggplot(results, aes(quality, value))+
+logistic_line <- ggplot(data = line, aes(x, y))+
   geom_line(data = line, aes(x,y))+
   # geom_point(aes(y = result))+
   theme_minimal()+

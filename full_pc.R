@@ -24,7 +24,7 @@ defenders <- read_csv('data/tackles.csv') %>%
   select(game = gameId, play = playId, nflId)
 
 week_pitch_control <- function(week_to_get, defensive = F){
-  # flag <- ifelse(defensive, 'def-', '')
+  flag <- ifelse(defensive, 'def-', '')
   # Tracking data for the week
   week_data <- read_csv(glue::glue('data/tracking_week_{num}.csv', 
                                    num = str_sub(week_to_get, start=5)))

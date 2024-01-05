@@ -50,7 +50,7 @@ get_quality <- function(all = FALSE){
     # Extract the elipse PC for the frame and player
     final <- pc_value %>% 
       inner_join(focus, by = c('game', 'play', 'frame'), relationship = 'many-to-many') %>% 
-      filter(sqrt((x-f1_1)^2 + (y-f1_2)^2) + sqrt((x-f2_1)^2 + (y-f2_2)^2) <= 4*pmax(scal_x, scal_y)) %>% 
+      filter(sqrt((x-f1_1)^2 + (y-f1_2)^2) + sqrt((x-f2_1)^2 + (y-f2_2)^2) <= 5*pmax(scal_x, scal_y)) %>% 
       select(game, play, frame, x,y, PC, value, tackler, min_dist, distance_to_ball) %>% 
       group_by(game, play,frame, tackler) %>% 
       mutate(quality = PC*value) %>% 
@@ -75,6 +75,7 @@ get_quality <- function(all = FALSE){
 }
   
   
+get_quality(all=F)
 get_quality(all=T)
 
   
