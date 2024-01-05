@@ -66,7 +66,7 @@ covered_distance_game <- function(game_id, play_id, nfl_id, frame_id){
   dist_game$traveled_game
 }
 
-tackles_preprocess <- function(week){
+tackles_preprocess <- function(week, only_tacklers = T){
   
   
   ball_carrier <- week %>% 
@@ -116,7 +116,7 @@ tackles_preprocess <- function(week){
     filter(any(event %in% c("tackle", "touchdown"))) %>% 
     ungroup() %>% 
     # Filtramos a los jugadores involucrados en el tacleo
-    filter(!is.na(tackle)) %>% 
+    filter(if(only_tacklers){!is.na(tackle)}else{gameId != 'a'}) %>% 
     # Agregamos información del peso y la altura de los tacleadores
     # left_join(select(players, nflId, height, weight, position), by = "nflId") %>% 
     # Calculamos la distancia al corredor

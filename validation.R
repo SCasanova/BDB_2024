@@ -2,15 +2,15 @@ library(tidyverse)
 library(arrow)
 library(data.table)
 
-pc <- read_parquet('pitch_control/pc-week1-2.parquet')
+pc <- read_parquet('pitch_control/pc-week9-3.parquet')
 
-tackler_info <- tackles_preprocess(read_parquet('clean_data/week1.parquet')) %>% 
+tackler_info <- tackles_preprocess(read_parquet('clean_data/week9.parquet')) %>% 
   select(game = gameId, play = playId, frame = frameId, tackler = nflId, mu_x, mu_y, rad_dir, scal_x, scal_y, radio, min_dist)
 
 full_info <- 
   left_join(pc, tackler_info, by = c('game', 'play', 'frame'))
 
-players <- read_parquet('clean_data/week1.parquet')
+players <- read_parquet('clean_data/week9.parquet')
 
 value <- read_parquet('value_map/value-week1-2.parquet')
 
@@ -120,28 +120,44 @@ map_prob <- function(x,  k=1/10, x0 = 0.5){
 # Testing -----------------------------------------------------------------
 
 
-
+library(gganimate)
 
 play_pc <- pc %>% 
-  filter(game == '2022091108' & play == 2208)
+  filter(game == '2022110609' & play == 271 & frame == 25)
+
+players_frame <- players %>%  
+  filter(gameId == '2022110609' & playId == 271 & frameId == 25) %>% 
+  rename(frame = frameId)
+
+
+plot_field()+
+  # geom_contour(data = value_frame, aes(x,y,z=value), breaks = seq(0.2,1,0.2))+
+  geom_raster(data = play_pc, aes(x,y, fill = PC), interpolate = F, alpha = 0.6)+
+  scale_fill_gradientn(limits  = range(0, 1),
+                       colours = c('red', alpha('white', 0), '#4f9943'))+
+  geom_segment(data = players_frame, aes(x = x, y = y, xend = vector_x, yend = vector_y),
+               arrow = arrow(length = unit(2, "mm")))+
+  geom_point(data = players_frame, aes(x,y, color = club), size = 9)+
+  geom_text(
+    data = players_frame,
+    mapping = aes(x = x, y = y, label = jerseyNumber),
+    size = 4.5
+  )
 
 play_tackler <- tackler_info %>% 
-  filter(game == '2022091108' & play == 2208) %>% 
+  filter(game == '2022110609' & play == 271) %>% 
   mutate(eigen_v1_1 = cos(rad_dir)*scal_y, 
          eigen_v1_2 = -sin(rad_dir)*scal_y,
          eigen_v2_1 = -sin(rad_dir)*scal_x, 
          eigen_v2_2 = -cos(rad_dir)*scal_x,
-         f1_1 = mu_x-sqrt((2*max(scal_x, scal_y))^2-  (2*min(scal_x, scal_y))^2)*sin(rad_dir),
-         f1_2 = mu_y-sqrt((2*max(scal_x, scal_y))^2-  (2*min(scal_x, scal_y))^2)*cos(rad_dir),
-         f2_1 = mu_x+sqrt((2*max(scal_x, scal_y))^2-  (2*min(scal_x, scal_y))^2)*sin(rad_dir),
-         f2_2 = mu_y+sqrt((2*max(scal_x, scal_y))^2-  (2*min(scal_x, scal_y))^2)*cos(rad_dir)
+         f1_1 = mu_x-sqrt((2*max(scal_x, scal_y))^2 -  (2*min(scal_x, scal_y))^2)*sin(rad_dir),
+         f1_2 = mu_y-sqrt((2*max(scal_x, scal_y))^2 -  (2*min(scal_x, scal_y))^2)*cos(rad_dir),
+         f2_1 = mu_x+sqrt((2*max(scal_x, scal_y))^2 -  (2*min(scal_x, scal_y))^2)*sin(rad_dir),
+         f2_2 = mu_y+sqrt((2*max(scal_x, scal_y))^2 -  (2*min(scal_x, scal_y))^2)*cos(rad_dir)
          ) 
 
-players_frame <- players %>%  
-  filter(gameId == '2022091108', playId == 2208, frameId == 27)
-
 value_frame <- value %>% 
-  filter(game == '2022091108' & play == 2208, frame == 27)
+  filter(game == '2022110609' & play == 271& frame == 25)
 
 
 pc_area <- play_pc %>% 
