@@ -216,7 +216,7 @@ play_frames <- plot_field() +
 # Number of frames in the play
 play_length <- length(unique(df_track$frameId))
 # Animation of the play
-play_anim <- animate(
+animate(
   play_frames,
   fps = 10, 
   nframe = play_length,
@@ -225,5 +225,4 @@ play_anim <- animate(
   end_pause = 0
 )
 
-play_anim
-anim_save('figures/play_example.gif', animation = last_animation())
+anim_save('figures/play_example_good.gif', animation = last_animation())
