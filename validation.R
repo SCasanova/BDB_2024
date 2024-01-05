@@ -110,12 +110,6 @@ fetch_team_colors <- function(team_colors_=NULL, h_team_, a_team_, diverge_=FALS
 }
 
 
-map_prob <- function(x,  k=1/10, x0 = 0.5){
-  1/(1+exp(-k*(x-x0)))
-}
-
-
-
 
 # Testing -----------------------------------------------------------------
 
