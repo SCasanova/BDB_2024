@@ -220,8 +220,8 @@ animate(
   play_frames,
   fps = 10, 
   nframe = play_length,
-  width = 1600,
-  height = 800,
+  width = 1000,
+  height = 500,
   end_pause = 0
 )
 
