@@ -225,4 +225,4 @@ animate(
   end_pause = 0
 )
 
-anim_save('figures/play_example_good.gif', animation = last_animation())
+anim_save('figures/play_example_medium.gif', animation = last_animation())
