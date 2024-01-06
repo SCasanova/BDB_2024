@@ -224,12 +224,11 @@ play_frames <- plot_field() +
 # Number of frames in the play
 play_length <- length(unique(df_track$frameId))
 # Animation of the play
-animate(
+a_gif <- animate(
   play_frames,
   fps = 10, 
-  nframe = play_length,
-  width = 1000,
-  height = 500,
+  nframes = 67,
+  width = 800,
   end_pause = 0
 )
 
