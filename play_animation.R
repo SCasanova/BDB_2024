@@ -31,8 +31,8 @@ df_track <- filter(week, gameId == game_id, playId == play_id)
 play_direction_ <-  df_track %>% head(1) %>% dplyr::pull(playDirection)
 # We select the columns of interest
 df_track <- df_track %>%
-  filter((team == 'CLE' & jerseyNumber %in% c(27, 55, 75, 7,18)) | 
-           (team == 'CAR' & jerseyNumber %in% c(21,24,25, 98,53)))
+  filter((team == 'CLE' & jerseyNumber %in% c(27, 55, 75, 7,18, 85, 11)) | 
+           (team == 'CAR' & jerseyNumber %in% c(21,24,25, 98,53, 26)))
   dplyr::select(x, y, s, dir, event, displayName, jerseyNumber, frameId, club, tackle, assist, pff_missedTackle)
 # We create the vectors of movement of each player
 df_track <- df_track %>%
@@ -233,4 +233,4 @@ animate(
   end_pause = 0
 )
 
-anim_save('figures/play_example_medium.gif', animation = last_animation())
+anim_save('figures/play_example_reduced.gif', animation = last_animation())
