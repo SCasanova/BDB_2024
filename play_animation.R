@@ -31,6 +31,8 @@ df_track <- filter(week, gameId == game_id, playId == play_id)
 play_direction_ <-  df_track %>% head(1) %>% dplyr::pull(playDirection)
 # We select the columns of interest
 df_track <- df_track %>%
+  filter((team == 'CLE' & jerseyNumber %in% c(27, 55, 75, 7,18)) | 
+           (team == 'CAR' & jerseyNumber %in% c(21,24,25, 98,53)))
   dplyr::select(x, y, s, dir, event, displayName, jerseyNumber, frameId, club, tackle, assist, pff_missedTackle)
 # We create the vectors of movement of each player
 df_track <- df_track %>%
@@ -208,6 +210,12 @@ play_frames <- plot_field() +
   # ) +
   # title 
   labs(title = play_$playDescription) +
+  geom_text(data = tack_quality, 
+            mapping = aes(
+              x = 100, 
+              y = 57, 
+              label = paste0('Tackle Probability: ', round(prob(max_sum),3)*100,'%')),
+            size = 7)+
   # animation stuff
   transition_time(frameId)  +
   ease_aes('linear') + 
