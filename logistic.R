@@ -127,8 +127,8 @@ hist1/logistic_line/hist2
 ggsave('figures/succesful_failed.png',
        device = 'png',
        dpi = 'retina',
-       width = 400,
-       height = 600
+       width = 4,
+       height = 6
        )
 
 
