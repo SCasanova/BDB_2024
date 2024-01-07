@@ -5,16 +5,17 @@ library(mvtnorm)
 
 # plot image settings
 options(repr.plot.width=20, repr.plot.height = 10)
+setwd("C:\\Users\\javie\\OneDrive - INSTITUTO TECNOLOGICO AUTONOMO DE MEXICO\\BigDataBowl\\BDB_2024")
 
 
 # Data sets
-week <- read_csv('data/tracking_week_1.csv')
+df_track <- read_csv('data/weeks/tracking_week_1.csv')
 tackles <- read_csv('data/tackles.csv')
 plays <- read_csv('data/plays.csv')
 games <- read_csv('data/games.csv')
 
 # Union between tracking data and tackles
-week <- left_join(week, tackles, c('gameId', 'playId', 'nflId'))
+week <- left_join(df_track, tackles, c('gameId', 'playId', 'nflId'))
 
 # We choose the play we want to plot
 game_id <- 2022090800
@@ -30,7 +31,7 @@ df_track <- filter(week, gameId == game_id, playId == play_id)
 play_direction_ <-  df_track %>% head(1) %>% dplyr::pull(playDirection)
 # We select the columns of interest
 df_track <- df_track %>%
-  dplyr::select(x, y, s, dir, event, displayName, jerseyNumber, frameId, club, tackle, assist, pff_missedTackle)
+  dplyr::select(x, y, s, dir, event, displayName, jerseyNumber, frameId, club)
 # We create the vectors of movement of each player
 df_track <- df_track %>%
   dplyr::mutate(
@@ -41,7 +42,7 @@ df_track <- df_track %>%
     v_theta = ifelse(is.nan(v_theta), 0, v_theta)
   ) %>%
   dplyr::select(frameId, event, team = club, jerseyNumber, displayName, x, y, s, 
-                v_theta, v_x, v_y, tackle, assist, pff_missedTackle)
+                v_theta, v_x, v_y)
 
 
 # Function that plot the field
@@ -139,10 +140,10 @@ fetch_team_colors <- function(team_colors_=NULL, h_team_, a_team_, diverge_=FALS
 
 # Determine the location of the line of scrimmage and the first down
 if (play_direction_ == "left") {
-  line_of_scrimmage = play_$yardlineNumber + 10
+  line_of_scrimmage = play_$absoluteYardlineNumber
   to_go_line = line_of_scrimmage - play_$yardsToGo
 } else {
-  line_of_scrimmage = 110 - play_$yardlineNumber
+  line_of_scrimmage = play_$absoluteYardlineNumber
   to_go_line = line_of_scrimmage + play_$yardsToGo
 }
 
