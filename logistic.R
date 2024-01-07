@@ -124,6 +124,13 @@ hist2 <- ggplot(results %>% filter(result == 0), aes(quality))+
 
 hist1/logistic_line/hist2
 
+ggsave('figures/succesful_failed.png',
+       device = 'png',
+       dpi = 'retina',
+       width = 400,
+       height = 600
+       )
+
 
 ggplot(results2, aes(sum_quality, max_quality, color = as.factor(result)))+
   geom_point()
