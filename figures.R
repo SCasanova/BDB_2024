@@ -163,11 +163,11 @@ tab1 <- table_data %>%
 
 table_data %>%
   arrange( -technique) %>%
-  filter(tackles >= 11) %>% 
-  head(15) %>% 
+  filter(tackles >= 11 & position == 'LB') %>% 
+  head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Top Players: Control Based Tackling Technique',
+    title = 'Top LBs: Control Based Tackling Technique',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -190,7 +190,7 @@ table_data %>%
     columns = `technique`,
     method = "numeric",
     palette = c("#A50026", "#006837"),
-    domain = c(0.18,-0.3)
+    domain = c(0.14,-0.3)
   ) %>% 
   fmt_percent(
     columns = c(position_tackle, tackle_pct, technique)
@@ -204,5 +204,235 @@ table_data %>%
     tackles = 'Tackle Events'
   ) %>% 
   tab_options(data_row.padding = px(10)) %>% 
-  gtsave("figures/top.png", expand = 3)
+  gtsave("figures/top_lbs.png", expand = 3)
+
+table_data %>%
+  arrange( -technique) %>%
+  filter(tackles >= 11 & position == 'DL') %>% 
+  head(10) %>% 
+  gt() %>%
+  tab_header(
+    title = 'Top DLs: Control Based Tackling Technique',
+  ) %>%
+  cols_label(
+    headshot_url = '',
+  ) %>%
+  # tab_spanner(
+  #   label = "Desempeño",
+  #   columns = c(accuracy, time)
+  # ) %>%
+  cols_align(
+    align = "center"
+  ) %>%
+  cols_align(
+    align = "left",
+    displayName
+  ) %>%
+  gtExtras::gt_img_rows(
+    headshot_url
+  ) %>%
+  data_color(
+    columns = `technique`,
+    method = "numeric",
+    palette = c("#A50026", "#006837"),
+    domain = c(0.19,-0.3)
+  ) %>% 
+  fmt_percent(
+    columns = c(position_tackle, tackle_pct, technique)
+  ) %>% 
+  cols_label(
+    displayName = 'Player',
+    # position = 'Pos',
+    position_tackle = 'Avg. Control at Tackle',
+    tackle_pct = 'Tackle %',
+    technique = 'Performance',
+    tackles = 'Tackle Events'
+  ) %>% 
+  tab_options(data_row.padding = px(10)) %>% 
+  gtsave("figures/top_dls.png", expand = 3)
+
+table_data %>%
+  arrange( -technique) %>%
+  filter(tackles >= 11 & position == 'DB') %>% 
+  head(10) %>% 
+  gt() %>%
+  tab_header(
+    title = 'Top DBs: Control Based Tackling Technique',
+  ) %>%
+  cols_label(
+    headshot_url = '',
+  ) %>%
+  # tab_spanner(
+  #   label = "Desempeño",
+  #   columns = c(accuracy, time)
+  # ) %>%
+  cols_align(
+    align = "center"
+  ) %>%
+  cols_align(
+    align = "left",
+    displayName
+  ) %>%
+  gtExtras::gt_img_rows(
+    headshot_url
+  ) %>%
+  data_color(
+    columns = `technique`,
+    method = "numeric",
+    palette = c("#A50026", "#006837"),
+    domain = c(0.14,-0.3)
+  ) %>% 
+  fmt_percent(
+    columns = c(position_tackle, tackle_pct, technique)
+  ) %>% 
+  cols_label(
+    displayName = 'Player',
+    # position = 'Pos',
+    position_tackle = 'Avg. Control at Tackle',
+    tackle_pct = 'Tackle %',
+    technique = 'Performance',
+    tackles = 'Tackle Events'
+  ) %>% 
+  tab_options(data_row.padding = px(10)) %>% 
+  gtsave("figures/top_dbs.png", expand = 3)
+
+
+
+# bottom ------------------------------------------------------------------
+
+
+table_data %>%
+  arrange( -technique) %>%
+  filter(tackles >= 11 & position == 'LB') %>% 
+  head(10) %>% 
+  gt() %>%
+  tab_header(
+    title = 'Bottom LBs: Control Based Tackling Technique',
+  ) %>%
+  cols_label(
+    headshot_url = '',
+  ) %>%
+  # tab_spanner(
+  #   label = "Desempeño",
+  #   columns = c(accuracy, time)
+  # ) %>%
+  cols_align(
+    align = "center"
+  ) %>%
+  cols_align(
+    align = "left",
+    displayName
+  ) %>%
+  gtExtras::gt_img_rows(
+    headshot_url
+  ) %>%
+  data_color(
+    columns = `technique`,
+    method = "numeric",
+    palette = c("#A50026", "#006837"),
+    domain = c(0.14,-0.3)
+  ) %>% 
+  fmt_percent(
+    columns = c(position_tackle, tackle_pct, technique)
+  ) %>% 
+  cols_label(
+    displayName = 'Player',
+    # position = 'Pos',
+    position_tackle = 'Avg. Control at Tackle',
+    tackle_pct = 'Tackle %',
+    technique = 'Performance',
+    tackles = 'Tackle Events'
+  ) %>% 
+  tab_options(data_row.padding = px(10)) %>% 
+  gtsave("figures/bottom_lbs.png", expand = 3)
+
+table_data %>%
+  arrange( technique) %>%
+  filter(tackles >= 11 & position == 'DL') %>% 
+  head(10) %>% 
+  gt() %>%
+  tab_header(
+    title = 'Bottom DLs: Control Based Tackling Technique',
+  ) %>%
+  cols_label(
+    headshot_url = '',
+  ) %>%
+  # tab_spanner(
+  #   label = "Desempeño",
+  #   columns = c(accuracy, time)
+  # ) %>%
+  cols_align(
+    align = "center"
+  ) %>%
+  cols_align(
+    align = "left",
+    displayName
+  ) %>%
+  gtExtras::gt_img_rows(
+    headshot_url
+  ) %>%
+  data_color(
+    columns = `technique`,
+    method = "numeric",
+    palette = c("#A50026", "#006837"),
+    domain = c(0.19,-0.19)
+  ) %>% 
+  fmt_percent(
+    columns = c(position_tackle, tackle_pct, technique)
+  ) %>% 
+  cols_label(
+    displayName = 'Player',
+    # position = 'Pos',
+    position_tackle = 'Avg. Control at Tackle',
+    tackle_pct = 'Tackle %',
+    technique = 'Performance',
+    tackles = 'Tackle Events'
+  ) %>% 
+  tab_options(data_row.padding = px(10)) %>% 
+  gtsave("figures/bottom_dls.png", expand = 3)
+
+table_data %>%
+  arrange( technique) %>%
+  filter(tackles >= 11 & position == 'DB') %>% 
+  head(10) %>% 
+  gt() %>%
+  tab_header(
+    title = 'Bottom DBs: Control Based Tackling Technique',
+  ) %>%
+  cols_label(
+    headshot_url = '',
+  ) %>%
+  # tab_spanner(
+  #   label = "Desempeño",
+  #   columns = c(accuracy, time)
+  # ) %>%
+  cols_align(
+    align = "center"
+  ) %>%
+  cols_align(
+    align = "left",
+    displayName
+  ) %>%
+  gtExtras::gt_img_rows(
+    headshot_url
+  ) %>%
+  data_color(
+    columns = `technique`,
+    method = "numeric",
+    palette = c("#A50026", "#006837"),
+    domain = c(0.14,-0.24)
+  ) %>% 
+  fmt_percent(
+    columns = c(position_tackle, tackle_pct, technique)
+  ) %>% 
+  cols_label(
+    displayName = 'Player',
+    # position = 'Pos',
+    position_tackle = 'Avg. Control at Tackle',
+    tackle_pct = 'Tackle %',
+    technique = 'Performance',
+    tackles = 'Tackle Events'
+  ) %>% 
+  tab_options(data_row.padding = px(10)) %>% 
+  gtsave("figures/bottom_dbs.png", expand = 3)
  
