@@ -106,7 +106,10 @@ hist1 <- ggplot(results %>% filter(result == 1), aes(quality))+
     y= 'Succesful Tackles'
   )+
   theme_void()+
-  xlim(0,21)
+  xlim(0,21)+
+  geom_vline(xintercept = mean(results %>% 
+                                 filter(result == 1) %>% 
+                                 pull(quality)))
 
 
 hist2 <- ggplot(results %>% filter(result == 0), aes(quality))+ 

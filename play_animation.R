@@ -184,12 +184,6 @@ play_frames <- plot_field() +
     fill = "#f8f9fa", colour = df_colors$away_2,
     shape = 21, alpha = 1, size = 8, stroke = 1.5
   ) +
-  geom_point(
-    data = df_track %>% dplyr::filter(jerseyNumber == 27 & team == 'CLE'),
-    mapping = aes(x = x, y = y),
-    fill = "#e8c83f", colour = df_colors$away_2,
-    shape = 21, alpha = 1, size = 8, stroke = 1.5
-  ) +
   geom_text(
     data = df_track %>% dplyr::filter(team == game_$visitorTeamAbbr),
     mapping = aes(x = x, y = y, label = jerseyNumber),
@@ -208,6 +202,17 @@ play_frames <- plot_field() +
     colour = df_colors$home_2, size = 4.5, 
   ) +
   # ball
+  geom_point(
+    data = df_track %>% dplyr::filter(jerseyNumber == 27 & team == 'CLE'),
+    mapping = aes(x = x, y = y),
+    fill = "#e8c83f", colour = df_colors$away_2,
+    shape = 21, alpha = 1, size = 8, stroke = 1.5
+  ) +
+  geom_text(
+    data = df_track %>% dplyr::filter(jerseyNumber == 27 & team == 'CLE'),
+    mapping = aes(x = x, y = y, label = jerseyNumber),
+    colour = df_colors$home_2, size = 4.5, 
+  ) +
   # geom_point(
   #   data = df_track %>% dplyr::filter(team == "football"),
   #   mapping = aes(x = x, y = y),

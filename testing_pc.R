@@ -53,6 +53,6 @@ ggplot(one_frame, aes(x,y))+
        y = ''
        )
 
-ggsave('figures/pitch_control.png', device = 'png', )
+ggsave('figures/pitch_control.png', device = 'png', dpi = 'retina', width = 8, height = 5)
 
 
