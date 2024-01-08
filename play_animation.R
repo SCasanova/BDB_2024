@@ -240,7 +240,7 @@ play_length <- length(unique(df_track$frameId))
 a_gif <- animate(
   play_frames,
   fps = 10, 
-  nframes = 67,
+  nframes = 51,
   width = 800,
   end_pause = 0
 )
