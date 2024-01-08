@@ -70,10 +70,10 @@ ggplot(final, aes(x,y))+
 
 info <- read_parquet('clean_data/week9.parquet') %>% 
   # filter(distance_to_ball == 0 & s >= 9 & rad_dir >= 2.3 & rad_dir <= 3.5) %>%
-  filter(gameId == '2022110608' & playId == 1403 & frameId == 35 & nflId == 47987)
+  filter(gameId == '2022110608' & playId == 1403 & frameId == 21 & nflId == 47987)
 
 data <- read_parquet('value_map/value-week9-3.parquet') %>% 
-  filter(game == '2022110608' & play == 1403 & frame == 35)
+  filter(game == '2022110608' & play == 1403 & frame == 21)
 
 ggplot(data, aes(x,y))+
   geom_contour_filled(aes(z=value), breaks = seq(0.2,1,0.2), binwidth = 2)+
@@ -89,7 +89,7 @@ ggplot(data, aes(x,y))+
     plot.subtitle = element_text(hjust = 0.5)
   )
 
-ggsave('figures/test3.png', 
+ggsave('figures/test.png', 
        device = 'png', 
        bg = 'transparent',
        dpi = 'retina',
@@ -162,12 +162,12 @@ tab1 <- table_data %>%
 
 
 table_data %>%
-  arrange( technique) %>%
+  arrange( -technique) %>%
   filter(tackles >= 11) %>% 
   head(15) %>% 
   gt() %>%
   tab_header(
-    title = 'Bottom Players: Control Based Tackling Technique',
+    title = 'Top Players: Control Based Tackling Technique',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -200,8 +200,9 @@ table_data %>%
     # position = 'Pos',
     position_tackle = 'Avg. Control at Tackle',
     tackle_pct = 'Tackle %',
-    technique = 'Technique +/-',
-    tackles = 'Tackles #'
+    technique = 'Performance',
+    tackles = 'Tackle Events'
   ) %>% 
   tab_options(data_row.padding = px(10)) %>% 
-  gtsave("figures/bottom.png", expand = 3)
+  gtsave("figures/top.png", expand = 3)
+ 
