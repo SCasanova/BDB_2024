@@ -151,14 +151,14 @@ tab1 <- table_data %>%
   ) %>% 
   cols_label(
     displayName = 'Player',
-    # position = 'Pos',
+    position = 'Pos',
     position_tackle = 'Avg. Control at Tackle',
     tackle_pct = 'Tackle %',
     technique = 'Technique +/-',
     tackles = 'Tackles #'
   ) %>% 
   tab_options(data_row.padding = px(10)) %>% 
-  gtsave("figures/lbs.png", expand = 3)
+  gtsave("figures/lbs.png", expand = 2)
 
 
 table_data %>%
@@ -197,14 +197,15 @@ table_data %>%
   ) %>% 
   cols_label(
     displayName = 'Player',
-    # position = 'Pos',
+    position = 'Pos',
     position_tackle = 'Avg. Control at Tackle',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10)) %>% 
-  gtsave("figures/top_lbs.png", expand = 3)
+  tab_options(data_row.padding = px(10),
+              table.font.size = px(18)) %>% 
+  gtsave("figures/top_lbs.png", expand =3)
 
 table_data %>%
   arrange( -technique) %>%
@@ -242,13 +243,14 @@ table_data %>%
   ) %>% 
   cols_label(
     displayName = 'Player',
-    # position = 'Pos',
+    position = 'Pos',
     position_tackle = 'Avg. Control at Tackle',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10)) %>% 
+  tab_options(data_row.padding = px(10),
+              table.font.size = px(18)) %>% 
   gtsave("figures/top_dls.png", expand = 3)
 
 table_data %>%
@@ -287,13 +289,14 @@ table_data %>%
   ) %>% 
   cols_label(
     displayName = 'Player',
-    # position = 'Pos',
+    position = 'Pos',
     position_tackle = 'Avg. Control at Tackle',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10)) %>% 
+  tab_options(data_row.padding = px(10),
+              table.font.size = px(18)) %>% 
   gtsave("figures/top_dbs.png", expand = 3)
 
 
@@ -302,7 +305,7 @@ table_data %>%
 
 
 table_data %>%
-  arrange( -technique) %>%
+  arrange( technique) %>%
   filter(tackles >= 11 & position == 'LB') %>% 
   head(10) %>% 
   gt() %>%
@@ -337,13 +340,14 @@ table_data %>%
   ) %>% 
   cols_label(
     displayName = 'Player',
-    # position = 'Pos',
+    position = 'Pos',
     position_tackle = 'Avg. Control at Tackle',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10)) %>% 
+  tab_options(data_row.padding = px(10),
+              table.font.size = px(18)) %>% 
   gtsave("figures/bottom_lbs.png", expand = 3)
 
 table_data %>%
@@ -388,7 +392,8 @@ table_data %>%
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10)) %>% 
+  tab_options(data_row.padding = px(10),
+              table.font.size = px(18)) %>% 
   gtsave("figures/bottom_dls.png", expand = 3)
 
 table_data %>%
@@ -427,12 +432,13 @@ table_data %>%
   ) %>% 
   cols_label(
     displayName = 'Player',
-    # position = 'Pos',
+    position = 'Pos',
     position_tackle = 'Avg. Control at Tackle',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10)) %>% 
+  tab_options(data_row.padding = px(10),
+              table.font.size = px(18)) %>% 
   gtsave("figures/bottom_dbs.png", expand = 3)
  
