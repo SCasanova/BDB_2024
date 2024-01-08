@@ -40,13 +40,24 @@ rows <- caret::createDataPartition(fitting$tackling, p= 0.75)$Resample1
 train <- fitting[rows,]
 test <- fitting[-rows,]
 
-ggplot(train, aes(as.factor(tackling), sum_quality, group = as.factor(tackling)))+
+ggplot(train, aes(as.factor(tackling), sum_quality, 
+                  group = as.factor(tackling), 
+                  fill =as.factor(tackling) ))+
   geom_boxplot()+
   theme_minimal()+
+  scale_fill_manual()+
+  theme(legend.position = 'none')+
   labs(
     x = 'Tackle',
     y = 'Total Quality of Control'
   )
+
+ggsave('figures/boxplot_regression.png',
+       device = 'png',
+       dpi = 'retina',
+       width = 10,
+       height = 8
+       )
 
   # filter(tackling == 0 | (tackling == 1 & sum_quality >= 5.9))
 
@@ -74,15 +85,26 @@ ggplot(fitting %>% filter(tackling == 1) , aes(sum_quality))+
 
 model <- glm(tackling ~ sum_quality, 
     data = fitting,
-    family = 'binomial')
+    family = binomial(link = 'probit'),
+    )
 
-saveRDS(model, 'clean_data/model.RDS')
+# saveRDS(model, 'clean_data/model.RDS')
 
 readRDS('clean_data/model.RDS')
 
 prob <- function(suma){
   exp(-1.1180  + 0.2277  *suma)/ 
     (1 + exp(-1.1180  + 0.2277  *suma))
+} 
+
+prob_cloglog <- function(suma){
+  exp(-0.64504  + 0.09964  *suma)/ 
+    (1 + exp(-0.64504  + 0.09964  *suma))
+} 
+
+prob_new<- function(suma){
+  exp(-1.2134  + 0.2324  *suma)/ 
+    (1 + exp(-1.2134  + 0.2324  *suma))
 } 
 
 
@@ -93,9 +115,61 @@ results <- tibble(
 )
 
 
+# tests -------------------------------------------------------------------
+
+
+
+model_logit <- glm(tackling ~ sum_quality, 
+             data = train,
+             family = binomial(link = 'logit'),
+)
+
+model_proit <- glm(tackling ~ sum_quality, 
+                   data = train,
+                   family = binomial(link = 'probit'),
+)
+
+model_log <- glm(tackling ~ sum_quality, 
+                   data = train,
+                   family = binomial(link = 'cloglog'),
+)
+
+test_logit <- test %>% 
+  mutate(prediction = predict(model_logit, test) %>% plogis(),
+         logloss = LogLoss(prediction, tackling))
+
+
+mean(test_logit$logloss)
+
+caret::confusionMatrix( as.factor(test_logit$prediction), as.factor(test_logit$tackling) )
+
+test_probit <- test %>% 
+  mutate(prediction = predict(model_proit, test) %>% plogis(),
+         logloss = LogLoss(prediction, tackling))
+
+mean(test_probit$logloss)
+
+caret::confusionMatrix( as.factor(test_probit$prediction), as.factor(test_probit$tackling))
+
+test_cloglog <- test %>% 
+  mutate(prediction = predict(model_log, test) %>% plogis(),
+         logloss = LogLoss(prediction, tackling))
+
+mean(test_cloglog$logloss)
+
+caret::confusionMatrix(as.factor(test_cloglog$prediction), as.factor(test_cloglog$tackling))
+
+
+
+
+
+# end ---------------------------------------------------------------------
+
+
+
 line <- tibble(
   x = seq(0,21),
-  y = prob(seq(0,21))
+  y = prob_new(seq(0,21))
 )
 
 library(patchwork)
@@ -160,7 +234,7 @@ hist1/logistic_line/hist2
 ggsave('figures/succesful_failed.png',
        device = 'png',
        dpi = 'retina',
-       width = 4,
+       width = 5,
        height = 6
        )
 
