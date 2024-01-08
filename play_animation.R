@@ -9,7 +9,7 @@ options(repr.plot.width=20, repr.plot.height = 10)
 
 # Data sets
 # week <- read_parquet('clean_data/week1.parquet')
-week <- read_csv('data/tracking_week_1.csv')
+week <- read_csv('data/weeks/tracking_week_1.csv')
 tackles <- read_csv('data/tackles.csv')
 plays <- read_csv('data/plays.csv')
 games <- read_csv('data/games.csv')
@@ -31,8 +31,8 @@ df_track <- filter(week, gameId == game_id, playId == play_id)
 play_direction_ <-  df_track %>% head(1) %>% dplyr::pull(playDirection)
 # We select the columns of interest
 df_track <- df_track %>%
-  filter((team == 'CLE' & jerseyNumber %in% c(27, 55, 75, 7,18, 85, 11)) | 
-           (team == 'CAR' & jerseyNumber %in% c(21,24,25, 98,53, 26)))
+  filter((club == 'CLE' & jerseyNumber %in% c(27, 55, 75, 7,18, 85, 11)) | 
+           (club == 'CAR' & jerseyNumber %in% c(21,24,25, 98,53, 26))) %>% 
   dplyr::select(x, y, s, dir, event, displayName, jerseyNumber, frameId, club, tackle, assist, pff_missedTackle)
 # We create the vectors of movement of each player
 df_track <- df_track %>%
