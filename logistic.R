@@ -43,9 +43,9 @@ test <- fitting[-rows,]
 ggplot(train, aes(as.factor(tackling), sum_quality, 
                   group = as.factor(tackling), 
                   fill =as.factor(tackling) ))+
-  geom_boxplot()+
+  geom_boxplot(alpha = 0.8)+
   theme_minimal()+
-  scale_fill_manual()+
+  scale_fill_manual(values  = c('#bd243d', '#4c8a4f'))+
   theme(legend.position = 'none')+
   labs(
     x = 'Tackle',

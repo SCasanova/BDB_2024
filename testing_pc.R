@@ -48,7 +48,7 @@ ggplot(one_frame, aes(x,y))+
              size = 3, 
              color = c('#257a30'))+
   labs(title = "Tackle made by J. Ramsey over S. Diggs", 
-       subtitle = "Ball carrier shown in yellow dot and tackler in green",
+       subtitle = "Ball carrier shown in yellow and tackler in green",
        x = "Distance from ofensive team's own end zone",
        y = ''
        )
