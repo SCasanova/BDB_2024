@@ -66,7 +66,38 @@ ggplot(final, aes(x,y))+
   coord_fixed()
 
 
-# Tables ------------------------------------------------------------------
+# Value Map ---------------------------------------------------------------
+
+info <- read_parquet('clean_data/week9.parquet') %>% 
+  # filter(distance_to_ball == 0 & s >= 9 & rad_dir >= 2.3 & rad_dir <= 3.5) %>%
+  filter(gameId == '2022110608' & playId == 1403 & frameId == 35 & nflId == 47987)
+
+data <- read_parquet('value_map/value-week9-3.parquet') %>% 
+  filter(game == '2022110608' & play == 1403 & frame == 35)
+
+ggplot(data, aes(x,y))+
+  geom_contour_filled(aes(z=value), breaks = seq(0.2,1,0.2), binwidth = 2)+
+  coord_fixed()+
+  scale_fill_manual(values = RColorBrewer::brewer.pal(4, 'Greens'))+
+  geom_point(data = info, aes(x =x, y = y), size = 7)+
+  geom_segment(data = info, aes(x = x, y = y, xend = vector_x, yend = vector_y),
+               size= 2.5,
+               arrow = arrow(length = unit(7, "mm")))+
+  theme_void()+
+  theme(
+    legend.position = 'none',
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+
+ggsave('figures/test3.png', 
+       device = 'png', 
+       bg = 'transparent',
+       dpi = 'retina',
+       width = 5,
+       height = 2.5)
+
+
+ # Tables ------------------------------------------------------------------
 
 library(gt)
 library(gtExtras)
