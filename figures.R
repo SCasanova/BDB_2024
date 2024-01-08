@@ -147,12 +147,12 @@ tab1 <- table_data %>%
     domain = c(0,1)
   ) %>% 
   fmt_percent(
-    columns = c(position_tackle, tackle_pct, technique)
+    columns = c(position_tackle, tackle_pct, technique), decimals = 1
   ) %>% 
   cols_label(
     displayName = 'Player',
     position = 'Pos',
-    position_tackle = 'Avg. Control at Tackle',
+    position_tackle = 'Avg. Tackle Prob.',
     tackle_pct = 'Tackle %',
     technique = 'Technique +/-',
     tackles = 'Tackles #'
@@ -167,7 +167,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Top LBs: Control Based Tackling Technique',
+    title = 'Top LBs: Control Based Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -193,12 +193,12 @@ table_data %>%
     domain = c(0.14,-0.3)
   ) %>% 
   fmt_percent(
-    columns = c(position_tackle, tackle_pct, technique)
+    columns = c(position_tackle, tackle_pct, technique), decimals = 1
   ) %>% 
   cols_label(
     displayName = 'Player',
     position = 'Pos',
-    position_tackle = 'Avg. Control at Tackle',
+    position_tackle = 'Avg. Tackle Prob.',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
@@ -213,7 +213,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Top DLs: Control Based Tackling Technique',
+    title = 'Top DLs: Control Based Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -239,12 +239,12 @@ table_data %>%
     domain = c(0.19,-0.3)
   ) %>% 
   fmt_percent(
-    columns = c(position_tackle, tackle_pct, technique)
+    columns = c(position_tackle, tackle_pct, technique), decimals = 1
   ) %>% 
   cols_label(
     displayName = 'Player',
     position = 'Pos',
-    position_tackle = 'Avg. Control at Tackle',
+    position_tackle = 'Avg. Tackle Prob.',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
@@ -259,7 +259,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Top DBs: Control Based Tackling Technique',
+    title = 'Top DBs: Control Based Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -285,12 +285,12 @@ table_data %>%
     domain = c(0.14,-0.3)
   ) %>% 
   fmt_percent(
-    columns = c(position_tackle, tackle_pct, technique)
+    columns = c(position_tackle, tackle_pct, technique), decimals = 1
   ) %>% 
   cols_label(
     displayName = 'Player',
     position = 'Pos',
-    position_tackle = 'Avg. Control at Tackle',
+    position_tackle = 'Avg. Tackle Prob.',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
@@ -310,7 +310,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Bottom LBs: Control Based Tackling Technique',
+    title = 'Bottom LBs: Control Based Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -336,12 +336,12 @@ table_data %>%
     domain = c(0.14,-0.3)
   ) %>% 
   fmt_percent(
-    columns = c(position_tackle, tackle_pct, technique)
+    columns = c(position_tackle, tackle_pct, technique), decimals = 1
   ) %>% 
   cols_label(
     displayName = 'Player',
     position = 'Pos',
-    position_tackle = 'Avg. Control at Tackle',
+    position_tackle = 'Avg. Tackle Prob.',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
@@ -356,7 +356,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Bottom DLs: Control Based Tackling Technique',
+    title = 'Bottom DLs: Control Based Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -382,12 +382,12 @@ table_data %>%
     domain = c(0.19,-0.19)
   ) %>% 
   fmt_percent(
-    columns = c(position_tackle, tackle_pct, technique)
+    columns = c(position_tackle, tackle_pct, technique), decimals = 1
   ) %>% 
   cols_label(
     displayName = 'Player',
-    # position = 'Pos',
-    position_tackle = 'Avg. Control at Tackle',
+    position = 'Pos',
+    position_tackle = 'Avg. Tackle Prob.',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
@@ -402,7 +402,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Bottom DBs: Control Based Tackling Technique',
+    title = 'Bottom DBs: Control Based Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -428,12 +428,12 @@ table_data %>%
     domain = c(0.14,-0.24)
   ) %>% 
   fmt_percent(
-    columns = c(position_tackle, tackle_pct, technique)
+    columns = c(position_tackle, tackle_pct, technique), decimals = 1
   ) %>% 
   cols_label(
     displayName = 'Player',
     position = 'Pos',
-    position_tackle = 'Avg. Control at Tackle',
+    position_tackle = 'Avg. Tackle Prob.',
     tackle_pct = 'Tackle %',
     technique = 'Performance',
     tackles = 'Tackle Events'
@@ -441,4 +441,4 @@ table_data %>%
   tab_options(data_row.padding = px(7),
               table.font.size = px(18)) %>% 
   gtsave("figures/bottom_dbs.png", expand = 3)
- 
+  
