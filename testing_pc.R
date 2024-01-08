@@ -28,7 +28,7 @@ ggplot(one_frame, aes(x,y))+
   # coord_fixed() +
   theme_minimal()+
   geom_segment(data = players, aes(x = x, y = y, xend = vector_x, yend = vector_y),
-               size = 1,
+               size = 0.5,
                arrow = arrow(length = unit(2, "mm"))) +
   theme(
     panel.grid.minor.y = element_blank(),
