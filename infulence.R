@@ -115,6 +115,7 @@ df <- read_parquet('clean_data/week9.parquet') %>%
 # Parallelized and vectorized run
 map_var2 <-mcmapply(frame_influence,df$px,df$py,df$mu_x,df$mu_y,df$rad_dir,df$scal_x,df$scal_y,df$f1_1, df$f1_2, df$f2_1, df$f2_2, df$gameId, df$playId, df$frameId, df$nflId, mc.cores=parallel::detectCores()-1)
 
+
 final <- map_var2 %>% t() %>% 
   data.frame() %>% 
   unnest(cols = c(game, play, frame, player, x, y, influ))

@@ -20,19 +20,39 @@ ball_carrier <- plays %>%
   inner_join(players, c('gameId', 'playId', 'nflId')) 
 
 ggplot(one_frame, aes(x,y))+
-  geom_raster(aes(fill = PC), interpolate = F, alpha = 0.6)+
+  geom_raster(aes(fill = PC), interpolate = T, alpha = 0.8)+
   scale_fill_gradientn(limits  = range(0, 1),
-                       colours = c('red', 'white', 'blue'))+
-  scale_x_continuous(limits = c(5,60))+
+                       colours = c('#C60C30', 'white', '#003594'))+
+  scale_x_continuous(limits = c(10,60), breaks = seq(10,60, 10))+
   scale_y_continuous(limits = c(0,54))+
-  coord_fixed() +
-  scale_color_manual(values = c('firebrick', 'blue'))+
-  geom_point(data = players, aes(x,y, color = club), size = 3)+
+  # coord_fixed() +
+  theme_minimal()+
   geom_segment(data = players, aes(x = x, y = y, xend = vector_x, yend = vector_y),
+               size = 1.5,
                arrow = arrow(length = unit(2, "mm"))) +
-  geom_point(data = ball_carrier, aes(x,y), size = 3, color = c('#935e38'))+
-  geom_point(data = filter(players, tackle==1), aes(x,y), size = 3, color = c('green'))+
-  xlab("Distance from ofensive team's own end zone")+
-  ylab("Y coordinate") +
-  labs(title = "Tackle made by J. Ramsey over S. Diggs", subtitle = "Ball carrier shown with brown dot and tackler with green dot")
+  theme(
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    axis.ticks.y  = element_blank(),
+    axis.text.y = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = 18),
+    plot.subtitle = element_text(hjust = 0.5, size = 15),
+    text = element_text(size = 15)
+  )+
+  scale_color_manual(values = c('#C60C30', '#003594'))+
+  geom_point(data = players %>% rename(Team = club), aes(x,y, color = Team), size = 5)+
+  geom_point(data = ball_carrier, aes(x,y), 
+             size = 3, 
+             color = c('#e8c83f'))+
+  geom_point(data = filter(players, tackle==1), aes(x,y), 
+             size = 3, 
+             color = c('#257a30'))+
+  labs(title = "Tackle made by J. Ramsey over S. Diggs", 
+       subtitle = "Ball carrier shown in yellow dot and tackler in green",
+       x = "Distance from ofensive team's own end zone",
+       y = ''
+       )
+
+ggsave('figures/pitch_control.png', device = 'png', )
+
 
