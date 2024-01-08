@@ -33,6 +33,21 @@ fitting <-
              by = c('game', 'play', 'tackler' = 'nflId')) %>% 
   anti_join(scrambles, by = c('game' = 'game_id', 'play' = 'play_id')) %>% 
   distinct()
+
+rows <- caret::createDataPartition(fitting$tackling, p= 0.75)$Resample1
+
+
+train <- fitting[rows,]
+test <- fitting[-rows,]
+
+ggplot(train, aes(as.factor(tackling), sum_quality, group = as.factor(tackling)))+
+  geom_boxplot()+
+  theme_minimal()+
+  labs(
+    x = 'Tackle',
+    y = 'Total Quality of Control'
+  )
+
   # filter(tackling == 0 | (tackling == 1 & sum_quality >= 5.9))
 
 # fitting2 <- 
@@ -62,6 +77,8 @@ model <- glm(tackling ~ sum_quality,
     family = 'binomial')
 
 saveRDS(model, 'clean_data/model.RDS')
+
+readRDS('clean_data/model.RDS')
 
 prob <- function(suma){
   exp(-1.1180  + 0.2277  *suma)/ 
