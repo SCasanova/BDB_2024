@@ -107,9 +107,7 @@ hist1 <- ggplot(results %>% filter(result == 1), aes(quality))+
   )+
   theme_void()+
   xlim(0,21)+
-  geom_vline(xintercept = mean(results %>% 
-                                 filter(result == 1) %>% 
-                                 pull(quality)))
+  geom_segment()
 
 
 hist2 <- ggplot(results %>% filter(result == 0), aes(quality))+ 
