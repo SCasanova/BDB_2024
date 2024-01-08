@@ -157,7 +157,7 @@ tab1 <- table_data %>%
     technique = 'Technique +/-',
     tackles = 'Tackles #'
   ) %>% 
-  tab_options(data_row.padding = px(10)) %>% 
+  tab_options(data_row.padding = px(7)) %>% 
   gtsave("figures/lbs.png", expand = 2)
 
 
@@ -203,8 +203,8 @@ table_data %>%
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10),
-              table.font.size = px(18)) %>% 
+  tab_options(data_row.padding = px(7),
+              table.font.size = px(20)) %>% 
   gtsave("figures/top_lbs.png", expand =3)
 
 table_data %>%
@@ -249,8 +249,8 @@ table_data %>%
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10),
-              table.font.size = px(18)) %>% 
+  tab_options(data_row.padding = px(7),
+              table.font.size = px(20)) %>% 
   gtsave("figures/top_dls.png", expand = 3)
 
 table_data %>%
@@ -295,8 +295,8 @@ table_data %>%
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10),
-              table.font.size = px(18)) %>% 
+  tab_options(data_row.padding = px(7),
+              table.font.size = px(20)) %>% 
   gtsave("figures/top_dbs.png", expand = 3)
 
 
@@ -346,8 +346,8 @@ table_data %>%
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10),
-              table.font.size = px(18)) %>% 
+  tab_options(data_row.padding = px(7),
+              table.font.size = px(20)) %>% 
   gtsave("figures/bottom_lbs.png", expand = 3)
 
 table_data %>%
@@ -392,8 +392,8 @@ table_data %>%
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10),
-              table.font.size = px(18)) %>% 
+  tab_options(data_row.padding = px(7),
+              table.font.size = px(20)) %>% 
   gtsave("figures/bottom_dls.png", expand = 3)
 
 table_data %>%
@@ -438,7 +438,7 @@ table_data %>%
     technique = 'Performance',
     tackles = 'Tackle Events'
   ) %>% 
-  tab_options(data_row.padding = px(10),
+  tab_options(data_row.padding = px(7),
               table.font.size = px(18)) %>% 
   gtsave("figures/bottom_dbs.png", expand = 3)
  
