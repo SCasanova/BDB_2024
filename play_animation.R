@@ -8,8 +8,10 @@ options(repr.plot.width=20, repr.plot.height = 10)
 
 
 # Data sets
-# week <- read_parquet('clean_data/week1.parquet')
-week <- read_csv('data/weeks/tracking_week_1.csv')
+# week <- read_csv('data/tracking_week_1.csv')
+week <- read_parquet('clean_data/week1.parquet')
+
+
 tackles <- read_csv('data/tackles.csv')
 plays <- read_csv('data/plays.csv')
 games <- read_csv('data/games.csv')
@@ -28,23 +30,23 @@ play_ <- filter(plays, gameId== game_id, playId == play_id)
 # Filter the frames of the game and play
 df_track <- filter(week, gameId == game_id, playId == play_id)
 # We save the direction of the play
-play_direction_ <-  df_track %>% head(1) %>% dplyr::pull(playDirection)
+play_direction_ <-  df_track %>% head(1) %>% 
+  dplyr::pull(playDirection)
 # We select the columns of interest
 df_track <- df_track %>%
   filter((club == 'CLE' & jerseyNumber %in% c(27, 55, 75, 7,18, 85, 11)) | 
            (club == 'CAR' & jerseyNumber %in% c(21,24,25, 98,53, 26))) %>% 
-  dplyr::select(x, y, s, dir, event, displayName, jerseyNumber, frameId, club, tackle, assist, pff_missedTackle)
+  dplyr::select(x, y, vector_x, vector_y, s, dir, event, displayName, jerseyNumber, frameId, club, tackle, assist, pff_missedTackle)
 # We create the vectors of movement of each player
 df_track <- df_track %>%
   dplyr::mutate(
-    dir_rad = dir * pi / 180,
-    v_x = sin(dir_rad) * s,
-    v_y = cos(dir_rad) * s,
-    v_theta = atan(v_y / v_x),
-    v_theta = ifelse(is.nan(v_theta), 0, v_theta)
+    # dir_rad = dir * pi / 180,
+    # v_x = sin(dir_rad) * s,
+    # v_y = cos(dir_rad) * s,
+    # v_theta = atan(v_y / v_x),
+    # v_theta = ifelse(is.nan(v_theta), 0, v_theta)
   ) %>%
-  dplyr::select(frameId, event, team = club, jerseyNumber, displayName, x, y, s, 
-                v_theta, v_x, v_y, tackle, assist, pff_missedTackle)
+  dplyr::select(frameId, event, team = club, jerseyNumber, displayName, x, y, s, v_x = vector_x, v_y = vector_y, tackle, assist, pff_missedTackle)
 
 
 # Function that plot the field
@@ -168,13 +170,13 @@ play_frames <- plot_field() +
   # away team velocities
   geom_segment(
     data = df_track %>% dplyr::filter(team == game_$visitorTeamAbbr),
-    mapping = aes(x = x, y = y, xend = x + v_x, yend = y + v_y),
+    mapping = aes(x = x, y = y, xend = v_x, yend = v_y),
     colour = df_colors$away_1, size = 1, arrow = arrow(length = unit(0.01, "npc"))
   ) + 
   # home team velocities
   geom_segment(
     data = df_track %>% dplyr::filter(team == game_$homeTeamAbbr),
-    mapping = aes(x = x, y = y, xend = x + v_x, yend = y + v_y),
+    mapping = aes(x = x, y = y, xend = v_x, yend = v_y),
     colour = df_colors$home_2, size = 1, arrow = arrow(length = unit(0.01, "npc"))
   ) +
   # away team locs and jersey numbers

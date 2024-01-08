@@ -107,7 +107,14 @@ hist1 <- ggplot(results %>% filter(result == 1), aes(quality))+
   )+
   theme_void()+
   xlim(0,21)+
-  geom_segment()
+  geom_segment(aes(x = mean(results %>% 
+                              filter(result == 1) %>% 
+                              pull(quality)),
+                   xend = mean(results %>% 
+                              filter(result == 1) %>% 
+                              pull(quality)),
+                   y = -0.01, yend = 0.15),
+               linetype = 'dashed')
 
 
 hist2 <- ggplot(results %>% filter(result == 0), aes(quality))+ 
@@ -121,7 +128,15 @@ hist2 <- ggplot(results %>% filter(result == 0), aes(quality))+
   scale_y_reverse()+
   labs(y = 'Missed Tackles (PFF)')+
   theme_void()+
-  xlim(0,21)
+  xlim(0,21)+
+  geom_segment(aes(x = mean(results %>% 
+                              filter(result == 0) %>% 
+                              pull(quality)),
+                   xend = mean(results %>% 
+                                 filter(result == 0) %>% 
+                                 pull(quality)),
+                   y = -0.01, yend = 0.15),
+               linetype = 'dashed')
 
 hist1/logistic_line/hist2
 
