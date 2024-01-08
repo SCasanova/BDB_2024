@@ -167,7 +167,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Top LBs: Control Based Tackling Performance',
+    title = 'Top LBs: Control Driven Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -213,7 +213,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Top DLs: Control Based Tackling Performance',
+    title = 'Top DLs: Control Driven Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -259,7 +259,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Top DBs: Control Based Tackling Performance',
+    title = 'Top DBs: Control Driven Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -310,7 +310,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Bottom LBs: Control Based Tackling Performance',
+    title = 'Bottom LBs: Control Driven Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -356,7 +356,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Bottom DLs: Control Based Tackling Performance',
+    title = 'Bottom DLs: Control Driven Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',
@@ -402,7 +402,7 @@ table_data %>%
   head(10) %>% 
   gt() %>%
   tab_header(
-    title = 'Bottom DBs: Control Based Tackling Performance',
+    title = 'Bottom DBs: Control Driven Tackling Performance',
   ) %>%
   cols_label(
     headshot_url = '',

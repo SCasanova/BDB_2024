@@ -47,7 +47,7 @@ ggplot(one_frame, aes(x,y))+
   geom_point(data = filter(players, tackle==1), aes(x,y), 
              size = 3, 
              color = c('#257a30'))+
-  labs(title = "Tackle made by J. Ramsey over S. Diggs", 
+  labs(title = "Tackle made by J. Ramsey on S. Diggs", 
        subtitle = "Ball carrier shown in yellow and tackler in green",
        x = "Distance from ofensive team's own end zone",
        y = ''
