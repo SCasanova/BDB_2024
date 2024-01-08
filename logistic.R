@@ -124,6 +124,8 @@ model_logit <- glm(tackling ~ sum_quality,
              family = binomial(link = 'logit'),
 )
 
+saveRDS(model_logit, 'clean_data/model_logit.rds')
+
 model_proit <- glm(tackling ~ sum_quality, 
                    data = train,
                    family = binomial(link = 'probit'),
