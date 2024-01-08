@@ -179,9 +179,15 @@ play_frames <- plot_field() +
   ) +
   # away team locs and jersey numbers
   geom_point(
-    data = df_track %>% dplyr::filter(team == game_$visitorTeamAbbr),
+    data = df_track %>% dplyr::filter(team == game_$visitorTeamAbbr & jerseyNumber != 27),
     mapping = aes(x = x, y = y),
     fill = "#f8f9fa", colour = df_colors$away_2,
+    shape = 21, alpha = 1, size = 8, stroke = 1.5
+  ) +
+  geom_point(
+    data = df_track %>% dplyr::filter(jerseyNumber == 27 & team == 'CLE'),
+    mapping = aes(x = x, y = y),
+    fill = "#e8c83f", colour = df_colors$away_2,
     shape = 21, alpha = 1, size = 8, stroke = 1.5
   ) +
   geom_text(

@@ -71,6 +71,7 @@ ggplot(final, aes(x,y))+
 library(gt)
 library(gtExtras)
 library(nflverse)
+library(tidyverse)
 
 
 player_info <- load_rosters(2022) %>% 
@@ -79,7 +80,55 @@ player_info <- load_rosters(2022) %>%
 table_data <- grade_pff %>% 
   mutate(tackler = as.character(tackler)) %>% 
   left_join(player_info, by = c('tackler' = 'gsis_it_id')) %>% 
-  select(displayName, headshot_url, position_tackle:tackles)
+  select(displayName, position = position.y, headshot_url, position_tackle:tackles)
+
+
+tab1 <- table_data %>% 
+  arrange(-position_tackle) %>% 
+  filter(tackles >= 11 & position == 'LB') %>% 
+  head(5) %>% 
+  select(-position) %>% 
+  gt() %>%
+  tab_header(
+    title = 'Top LBs in Tackle Positioning',
+  ) %>%
+  cols_label(
+    headshot_url = '',
+  ) %>%
+  # tab_spanner(
+  #   label = "Desempeño",
+  #   columns = c(accuracy, time)
+  # ) %>%
+  cols_align(
+    align = "center"
+  ) %>%
+  cols_align(
+    align = "left",
+    displayName
+  ) %>%
+  gtExtras::gt_img_rows(
+    headshot_url
+  ) %>%
+  data_color(
+    columns = `position_tackle`,
+    method = "numeric",
+    palette = c("#A50026", "#006837"),
+    domain = c(0,1)
+  ) %>% 
+  fmt_percent(
+    columns = c(position_tackle, tackle_pct, technique)
+  ) %>% 
+  cols_label(
+    displayName = 'Player',
+    # position = 'Pos',
+    position_tackle = 'Avg. Control at Tackle',
+    tackle_pct = 'Tackle %',
+    technique = 'Technique +/-',
+    tackles = 'Tackles #'
+  ) %>% 
+  tab_options(data_row.padding = px(10)) %>% 
+  gtsave("figures/lbs.png", expand = 3)
+
 
 table_data %>%
   arrange( technique) %>%

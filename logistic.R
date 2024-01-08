@@ -132,7 +132,7 @@ ggsave('figures/succesful_failed.png',
        )
 
 
-ggplot(results2, aes(sum_quality, max_quality, color = as.factor(result)))+
+ ggplot(results2, aes(sum_quality, max_quality, color = as.factor(result)))+
   geom_point()
 
 ggplot(fitting2, aes(sum_quality, fill = as.factor(tackling)))+
